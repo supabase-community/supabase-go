@@ -29,3 +29,12 @@ func TestRpc(t *testing.T) {
 	result := client.Rpc("hello_world", "", nil)
 	fmt.Println(result)
 }
+
+func TestStorage(t *testing.T) {
+	client, err := supabase.NewClient(API_URL, API_KEY, nil)
+	if err != nil {
+		fmt.Println("cannot initalize client", err)
+	}
+	result, err := client.Storage.GetBucket("bucket-id")
+	fmt.Println(result, err)
+}

@@ -8,7 +8,7 @@ An isomorphic Go client for Supabase.
   - Access your database using a REST API generated from your schema & database functions
 - [ ] Integration with [Gotrue](https://github.com/supabase-community/gotrue-go)
   - User authentication, including OAuth, email/password, and native sign-in
-- [ ] Integration with [Supabase Storage](https://github.com/supabase-community/storage-go)
+- [x] Integration with [Supabase Storage](https://github.com/supabase-community/storage-go)
   - Store files in S3 with additional managed metadata 
 - [ ] Integration with [Supabase Edge Functions](https://github.com/supabase-community/functions-go)
   -  Run serverless functions on the edge
@@ -26,14 +26,14 @@ _Reminder: `supabase-go` has some APIs that require the `service_key` rather tha
 ### Get Started
 First of all, you need to install the library:
 ```sh
-    go install github.com/supabase-community/supabase-go
+  go install github.com/supabase-community/supabase-go
 ```
 
 Then you can use
 ```go
-    client, err := supabase.NewClient(API_URL, API_KEY, nil)
-	if err != nil {
-		fmt.Println("cannot initalize client", err)
-	}
-	data, count, err := client.From("countries").Select("*", "exact", false).Execute()
+  client, err := supabase.NewClient(API_URL, API_KEY, nil)
+  if err != nil {
+    fmt.Println("cannot initalize client", err)
+  }
+  data, count, err := client.From("countries").Select("*", "exact", false).Execute()
 ```

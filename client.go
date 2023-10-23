@@ -3,13 +3,18 @@ package supabase
 import (
 	"errors"
 
+	storage_go "github.com/supabase-community/storage-go"
 	"github.com/supabase/postgrest-go"
 )
 
-const REST_URL = "/rest/v1"
+const (
+	REST_URL     = "/rest/v1"
+	STORGAGE_URL = "/storage/v1"
+)
 
 type Client struct {
-	rest *postgrest.Client
+	rest    *postgrest.Client
+	Storage *storage_go.Client
 }
 
 type RestOptions struct {
@@ -21,6 +26,10 @@ type ClientOptions struct {
 	Db      *RestOptions
 }
 
+// NewClient creates a new Supabase client.
+// url is the Supabase URL.
+// key is the Supabase API key.
+// options is the Supabase client options.
 func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	if url == "" || key == "" {
 		return nil, errors.New("url and key are required")
@@ -41,6 +50,7 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 		}
 	}
 	client.rest = postgrest.NewClient(url+REST_URL, schema, defaultHeaders)
+	client.Storage = storage_go.NewClient(url+STORGAGE_URL, key, defaultHeaders)
 
 	return client, nil
 }
