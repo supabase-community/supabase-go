@@ -35,22 +35,32 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 		return nil, errors.New("url and key are required")
 	}
 
-	defaultHeaders := map[string]string{
+	headers := map[string]string{
 		"Authorization": "Bearer " + key,
 		"apikey":        key,
 	}
 
-	client := &Client{}
-	schema := "public"
-	if options != nil && options.Db != nil {
-		if len(options.Headers) > 0 {
-			for k, v := range options.Headers {
-				defaultHeaders[k] = v
-			}
+	if options != nil && options.Headers != nil {
+		for k, v := range options.Headers {
+			headers[k] = v
 		}
 	}
-	client.rest = postgrest.NewClient(url+REST_URL, schema, defaultHeaders)
-	client.Storage = storage_go.NewClient(url+STORGAGE_URL, key, defaultHeaders)
+
+	var schema string
+	if options != nil && options.Db != nil && options.Db.Schema != "" {
+		schema = options.Db.Schema
+	} else {
+		schema = "public"
+	}
+	if options != nil && options.Headers != nil {
+		for k, v := range options.Headers {
+			headers[k] = v
+		}
+	}
+
+	client := &Client{}
+	client.rest = postgrest.NewClient(url+REST_URL, schema, headers)
+	client.Storage = storage_go.NewClient(url+STORGAGE_URL, key, headers)
 
 	return client, nil
 }
