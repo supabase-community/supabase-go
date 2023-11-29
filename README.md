@@ -26,7 +26,7 @@ _Reminder: `supabase-go` has some APIs that require the `service_key` rather tha
 ### Get Started
 First of all, you need to install the library:
 ```sh
-  go install github.com/supabase-community/supabase-go
+  go get github.com/supabase-community/supabase-go
 ```
 
 Then you can use
