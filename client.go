@@ -2,9 +2,13 @@ package supabase
 
 import (
 	"errors"
+	"net/url"
+	"strings"
 
+	"github.com/supabase-community/gotrue-go"
+	"github.com/supabase-community/gotrue-go/types"
+	postgrest "github.com/supabase-community/postgrest-go"
 	storage_go "github.com/supabase-community/storage-go"
-	"github.com/supabase/postgrest-go"
 )
 
 const (
@@ -13,8 +17,15 @@ const (
 )
 
 type Client struct {
-	rest    *postgrest.Client
-	Storage *storage_go.Client
+	rest    postgrest.Client
+	Storage storage_go.Client
+	Auth    gotrue.Client
+	options clientOptions
+}
+
+type clientOptions struct {
+	url     string
+	headers map[string]string
 }
 
 type RestOptions struct {
@@ -40,6 +51,11 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 		"apikey":        key,
 	}
 
+	client := &Client{}
+	client.options.url = url
+	// map is pass by reference, so this gets updated by rest of function
+	client.options.headers = headers
+
 	if options != nil && options.Headers != nil {
 		for k, v := range options.Headers {
 			headers[k] = v
@@ -58,11 +74,30 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 		}
 	}
 
-	client := &Client{}
-	client.rest = postgrest.NewClient(url+REST_URL, schema, headers)
-	client.Storage = storage_go.NewClient(url+STORGAGE_URL, key, headers)
+	client.rest = *postgrest.NewClient(url+REST_URL, schema, headers)
+	client.Storage = *storage_go.NewClient(url+STORGAGE_URL, key, headers)
+
+	// need reference not struct
+	client.Auth = gotrue.New(getProjectReference(url), key)
+	// client.Auth = tmpClient
 
 	return client, nil
+}
+
+func getProjectReference(projectURL string) string {
+
+	u, err := url.Parse(projectURL)
+	if err != nil {
+		return ""
+	}
+	host := u.Hostname()
+	fields := strings.Split(host, ".")
+	if len(fields) != 3 {
+		return ""
+	}
+
+	return fields[0]
+
 }
 
 // Wrap postgrest From method
@@ -75,4 +110,17 @@ func (c *Client) From(table string) *postgrest.QueryBuilder {
 // Rpc returns a string for the specified function.
 func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
 	return c.rest.Rpc(name, count, rpcBody)
+}
+
+func (c *Client) SignInWithEmailPassword(email, password string) {
+	token, err := c.Auth.SignInWithEmailPassword(email, password)
+	c.UpdateAuthSession(token.Session, err)
+
+}
+
+func (c *Client) UpdateAuthSession(session types.Session, err error) {
+	c.Auth = c.Auth.WithToken(session.AccessToken)
+	c.rest.SetAuthToken(session.AccessToken)
+	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
+	c.Storage = *storage_go.NewClient(c.options.url, session.AccessToken, c.options.headers)
 }
