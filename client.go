@@ -2,8 +2,6 @@ package supabase
 
 import (
 	"errors"
-	"net/url"
-	"strings"
 
 	"github.com/supabase-community/gotrue-go"
 	"github.com/supabase-community/gotrue-go/types"
