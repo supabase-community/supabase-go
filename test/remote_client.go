@@ -13,12 +13,6 @@ import (
 	"github.com/supabase-community/supabase-go"
 )
 
-var (
-	RestUrl = `http://localhost:3000`
-	headers = map[string]string{}
-	schema  = "public"
-)
-
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -30,7 +24,7 @@ func main() {
 	email := os.Getenv("TESTUSER")
 	password := os.Getenv("TESTUSERPASSWORD")
 
-	client, _ := supabase.NewClient(projectURL, anonKey, nil)
+	client, _ := supabase.NewClient(projectURL, anonKey, "", nil)
 	client.SignInWithEmailPassword(email, password)
 
 	//

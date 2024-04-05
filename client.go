@@ -17,6 +17,7 @@ const (
 )
 
 type Client struct {
+	// Why is this a private field??
 	rest    postgrest.Client
 	Storage storage_go.Client
 	Auth    gotrue.Client
@@ -28,27 +29,26 @@ type clientOptions struct {
 	headers map[string]string
 }
 
-type RestOptions struct {
-	Schema string
-}
-
-type ClientOptions struct {
-	Headers map[string]string
-	Db      *RestOptions
-}
-
 // NewClient creates a new Supabase client.
 // url is the Supabase URL.
 // key is the Supabase API key.
 // options is the Supabase client options.
-func NewClient(url, key string, options *ClientOptions) (*Client, error) {
+func NewClient(url, key string, schema string, headers map[string]string) (*Client, error) {
 	if url == "" || key == "" {
 		return nil, errors.New("url and key are required")
 	}
 
-	headers := map[string]string{
-		"Authorization": "Bearer " + key,
-		"apikey":        key,
+	if headers == nil {
+		headers = map[string]string{}
+	}
+
+	headers["Authorization"] = "Bearer " + key
+	headers["apikey"] = key
+
+	if headers != nil {
+		for k, v := range headers {
+			headers[k] = v
+		}
 	}
 
 	client := &Client{}
@@ -56,34 +56,21 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	// map is pass by reference, so this gets updated by rest of function
 	client.options.headers = headers
 
-	if options != nil && options.Headers != nil {
-		for k, v := range options.Headers {
-			headers[k] = v
-		}
-	}
-
-	var schema string
-	if options != nil && options.Db != nil && options.Db.Schema != "" {
-		schema = options.Db.Schema
-	} else {
+	if schema == "" {
 		schema = "public"
 	}
-	if options != nil && options.Headers != nil {
-		for k, v := range options.Headers {
-			headers[k] = v
-		}
-	}
 
+	// why pointer to an interface???
+	// this isn't necessary in go
+	// TODO: fix in other modules
 	client.rest = *postgrest.NewClient(url+REST_URL, schema, headers)
 	client.Storage = *storage_go.NewClient(url+STORGAGE_URL, key, headers)
-
-	// need reference not struct
 	client.Auth = gotrue.New(getProjectReference(url), key)
-	// client.Auth = tmpClient
 
 	return client, nil
 }
 
+// getProjectReference strips out url to get project identifier
 func getProjectReference(projectURL string) string {
 
 	u, err := url.Parse(projectURL)
