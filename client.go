@@ -14,6 +14,7 @@ import (
 const (
 	REST_URL     = "/rest/v1"
 	STORGAGE_URL = "/storage/v1"
+	AUTH_URL     = "/auth/v1"
 )
 
 type Client struct {
@@ -65,26 +66,11 @@ func NewClient(url, key string, schema string, headers map[string]string) (*Clie
 	// TODO: fix in other modules
 	client.rest = *postgrest.NewClient(url+REST_URL, schema, headers)
 	client.Storage = *storage_go.NewClient(url+STORGAGE_URL, key, headers)
-	client.Auth = gotrue.New(getProjectReference(url), key)
+	// ugly to make auth client use custom URL
+	tmp := gotrue.New(url, key)
+	client.Auth = tmp.WithCustomGoTrueURL(url + AUTH_URL)
 
 	return client, nil
-}
-
-// getProjectReference strips out url to get project identifier
-func getProjectReference(projectURL string) string {
-
-	u, err := url.Parse(projectURL)
-	if err != nil {
-		return ""
-	}
-	host := u.Hostname()
-	fields := strings.Split(host, ".")
-	if len(fields) != 3 {
-		return ""
-	}
-
-	return fields[0]
-
 }
 
 // Wrap postgrest From method
