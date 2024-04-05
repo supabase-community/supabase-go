@@ -6,8 +6,8 @@ An isomorphic Go client for Supabase.
   - Realtime listeners for database changes
 - [x] Integration with [Postgrest](https://github.com/supabase-community/postgrest-go)
   - Access your database using a REST API generated from your schema & database functions
-- [ ] Integration with [Gotrue](https://github.com/supabase-community/gotrue-go)
-  - User authentication, including OAuth, email/password, and native sign-in
+- [x] Integration with [Gotrue](https://github.com/supabase-community/gotrue-go)
+  - User authentication, including OAuth, ***email/password***, and native sign-in
 - [x] Integration with [Supabase Storage](https://github.com/supabase-community/storage-go)
   - Store files in S3 with additional managed metadata 
 - [ ] Integration with [Supabase Edge Functions](https://github.com/supabase-community/functions-go)
@@ -31,9 +31,22 @@ First of all, you need to install the library:
 
 Then you can use
 ```go
-  client, err := supabase.NewClient(API_URL, API_KEY, nil)
+  client, err := supabase.NewClient(API_URL, API_KEY, "", nil)
   if err != nil {
     fmt.Println("cannot initalize client", err)
   }
   data, count, err := client.From("countries").Select("*", "exact", false).Execute()
+```
+
+
+### Use authenticated client
+
+```go
+
+	client, err := supabase.NewClient(API_URL, API_KEY, "", nil)
+	if err != nil {
+		fmt.Println("cannot initalize client", err)
+	}
+	client.SignInWithEmailPassword(USER_EMAIL, USER_PASSWORD)
+
 ```

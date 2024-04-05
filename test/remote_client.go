@@ -24,7 +24,10 @@ func main() {
 	email := os.Getenv("TESTUSER")
 	password := os.Getenv("TESTUSERPASSWORD")
 
-	client, _ := supabase.NewClient(projectURL, anonKey, "", nil)
+	client, err := supabase.NewClient(projectURL, anonKey, "", nil)
+	if err != nil {
+		fmt.Println("cannot initalize client", err)
+	}
 	client.SignInWithEmailPassword(email, password)
 
 	//
