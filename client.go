@@ -17,8 +17,9 @@ const (
 
 type Client struct {
 	// Why is this a private field??
-	rest    postgrest.Client
-	Storage storage_go.Client
+	rest    *postgrest.Client
+	Storage *storage_go.Client
+	// Auth is an interface. We don't need a pointer to an interface.
 	Auth    gotrue.Client
 	options clientOptions
 }
@@ -59,11 +60,8 @@ func NewClient(url, key string, schema string, headers map[string]string) (*Clie
 		schema = "public"
 	}
 
-	// why pointer to an interface???
-	// this isn't necessary in go
-	// TODO: fix in other modules
-	client.rest = *postgrest.NewClient(url+REST_URL, schema, headers)
-	client.Storage = *storage_go.NewClient(url+STORGAGE_URL, key, headers)
+	client.rest = postgrest.NewClient(url+REST_URL, schema, headers)
+	client.Storage = storage_go.NewClient(url+STORGAGE_URL, key, headers)
 	// ugly to make auth client use custom URL
 	tmp := gotrue.New(url, key)
 	client.Auth = tmp.WithCustomGoTrueURL(url + AUTH_URL)
@@ -93,5 +91,5 @@ func (c *Client) UpdateAuthSession(session types.Session, err error) {
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
-	c.Storage = *storage_go.NewClient(c.options.url, session.AccessToken, c.options.headers)
+	c.Storage = storage_go.NewClient(c.options.url, session.AccessToken, c.options.headers)
 }
