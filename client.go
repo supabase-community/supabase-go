@@ -81,15 +81,33 @@ func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
 	return c.rest.Rpc(name, count, rpcBody)
 }
 
-func (c *Client) SignInWithEmailPassword(email, password string) {
+func (c *Client) SignInWithEmailPassword(email, password string) error {
 	token, err := c.Auth.SignInWithEmailPassword(email, password)
-	c.UpdateAuthSession(token.Session, err)
+	err = c.UpdateAuthSession(token.Session, err)
 
+	return err
 }
 
-func (c *Client) UpdateAuthSession(session types.Session, err error) {
+func (c *Client) SignInWithPhonePassword(phone, password string) error {
+	token, err := c.Auth.SignInWithPhonePassword(phone, password)
+	c.UpdateAuthSession(token.Session, err)
+	return err
+}
+
+func (c *Client) RefreshToken(refreshToken string) error {
+	token, err := c.Auth.RefreshToken(refreshToken)
+	c.UpdateAuthSession(token.Session, err)
+	return err
+}
+
+func (c *Client) UpdateAuthSession(session types.Session, err error) error {
+	if err != nil {
+		return err
+	}
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
 	c.Storage = storage_go.NewClient(c.options.url, session.AccessToken, c.options.headers)
+
+	return err
 }
