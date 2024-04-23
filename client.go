@@ -29,24 +29,28 @@ type clientOptions struct {
 	headers map[string]string
 }
 
+type ClientOptions struct {
+	Headers map[string]string
+	Schema  string
+}
+
 // NewClient creates a new Supabase client.
 // url is the Supabase URL.
 // key is the Supabase API key.
 // options is the Supabase client options.
-func NewClient(url, key string, schema string, headers map[string]string) (*Client, error) {
+func NewClient(url, key string, options *ClientOptions) (*Client, error) {
+
 	if url == "" || key == "" {
 		return nil, errors.New("url and key are required")
 	}
 
-	if headers == nil {
-		headers = map[string]string{}
+	headers := map[string]string{
+		"Authorization": "Bearer " + key,
+		"apikey":        key,
 	}
 
-	headers["Authorization"] = "Bearer " + key
-	headers["apikey"] = key
-
-	if headers != nil {
-		for k, v := range headers {
+	if options != nil && options.Headers != nil {
+		for k, v := range options.Headers {
 			headers[k] = v
 		}
 	}
@@ -56,7 +60,10 @@ func NewClient(url, key string, schema string, headers map[string]string) (*Clie
 	// map is pass by reference, so this gets updated by rest of function
 	client.options.headers = headers
 
-	if schema == "" {
+	var schema string
+	if options != nil && options.Schema != "" {
+		schema = options.Schema
+	} else {
 		schema = "public"
 	}
 
@@ -83,31 +90,36 @@ func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
 
 func (c *Client) SignInWithEmailPassword(email, password string) error {
 	token, err := c.Auth.SignInWithEmailPassword(email, password)
-	err = c.UpdateAuthSession(token.Session, err)
+	if err != nil {
+		return err
+	}
+	c.UpdateAuthSession(token.Session)
 
 	return err
 }
 
 func (c *Client) SignInWithPhonePassword(phone, password string) error {
 	token, err := c.Auth.SignInWithPhonePassword(phone, password)
-	c.UpdateAuthSession(token.Session, err)
+	if err != nil {
+		return err
+	}
+	c.UpdateAuthSession(token.Session)
 	return err
 }
 
 func (c *Client) RefreshToken(refreshToken string) error {
 	token, err := c.Auth.RefreshToken(refreshToken)
-	c.UpdateAuthSession(token.Session, err)
-	return err
-}
-
-func (c *Client) UpdateAuthSession(session types.Session, err error) error {
 	if err != nil {
 		return err
 	}
+	c.UpdateAuthSession(token.Session)
+	return err
+}
+
+func (c *Client) UpdateAuthSession(session types.Session) {
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
 	c.Storage = storage_go.NewClient(c.options.url, session.AccessToken, c.options.headers)
 
-	return err
 }
