@@ -3,18 +3,19 @@ package supabase
 import (
 	"errors"
 
-	storage_go "github.com/supabase-community/storage-go"
-	"github.com/supabase/postgrest-go"
+	"github.com/supabase-community/postgrest-go"
+	storage "github.com/supabase-community/storage-go"
 )
 
 const (
-	REST_URL     = "/rest/v1"
-	STORGAGE_URL = "/storage/v1"
+	REST_URL      = "/rest/v1"
+	STORAGE_URL   = "/storage/v1"
+	DefaultSchema = "public"
 )
 
 type Client struct {
-	rest    *postgrest.Client
-	Storage *storage_go.Client
+	Rest    *postgrest.Client
+	Storage *storage.Client
 }
 
 type RestOptions struct {
@@ -47,20 +48,17 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	}
 
 	var schema string
-	if options != nil && options.Db != nil && options.Db.Schema != "" {
+	if options != nil && options.Db != nil {
 		schema = options.Db.Schema
-	} else {
-		schema = "public"
 	}
-	if options != nil && options.Headers != nil {
-		for k, v := range options.Headers {
-			headers[k] = v
-		}
+	if schema == "" {
+		schema = DefaultSchema
 	}
 
-	client := &Client{}
-	client.rest = postgrest.NewClient(url+REST_URL, schema, headers)
-	client.Storage = storage_go.NewClient(url+STORGAGE_URL, key, headers)
+	client := &Client{
+		Rest:    postgrest.NewClient(url+REST_URL, schema, headers),
+		Storage: storage.NewClient(url+STORAGE_URL, key, headers),
+	}
 
 	return client, nil
 }
@@ -68,11 +66,11 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 // Wrap postgrest From method
 // From returns a QueryBuilder for the specified table.
 func (c *Client) From(table string) *postgrest.QueryBuilder {
-	return c.rest.From(table)
+	return c.Rest.From(table)
 }
 
 // Wrap postgrest Rpc method
 // Rpc returns a string for the specified function.
 func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
-	return c.rest.Rpc(name, count, rpcBody)
+	return c.Rest.Rpc(name, count, rpcBody)
 }
