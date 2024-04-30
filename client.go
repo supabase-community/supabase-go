@@ -88,32 +88,32 @@ func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
 	return c.rest.Rpc(name, count, rpcBody)
 }
 
-func (c *Client) SignInWithEmailPassword(email, password string) error {
+func (c *Client) SignInWithEmailPassword(email, password string) (types.Session, error) {
 	token, err := c.Auth.SignInWithEmailPassword(email, password)
 	if err != nil {
-		return err
+		return types.Session{}, err
 	}
 	c.UpdateAuthSession(token.Session)
 
-	return err
+	return token.Session, err
 }
 
-func (c *Client) SignInWithPhonePassword(phone, password string) error {
+func (c *Client) SignInWithPhonePassword(phone, password string) (types.Session, error) {
 	token, err := c.Auth.SignInWithPhonePassword(phone, password)
 	if err != nil {
-		return err
+		return types.Session{}, err
 	}
 	c.UpdateAuthSession(token.Session)
-	return err
+	return token.Session, err
 }
 
-func (c *Client) RefreshToken(refreshToken string) error {
+func (c *Client) RefreshToken(refreshToken string) (types.Session, error) {
 	token, err := c.Auth.RefreshToken(refreshToken)
 	if err != nil {
-		return err
+		return types.Session{}, err
 	}
 	c.UpdateAuthSession(token.Session)
-	return err
+	return token.Session, err
 }
 
 func (c *Client) UpdateAuthSession(session types.Session) {
