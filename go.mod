@@ -19,4 +19,4 @@ require (
 
 replace github.com/supabase-community/postgrest-go => github.com/roja/postgrest-go v0.0.11
 
-replace github.com/supabase-community/functions-go => github.com/roja/functions-go v0.0.1
+replace github.com/supabase-community/functions-go => github.com/roja/functions-go v0.0.2

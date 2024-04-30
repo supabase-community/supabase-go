@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/supabase-community/functions-go"
 	"github.com/supabase-community/supabase-go"
 )
 
@@ -45,6 +44,6 @@ func TestFunctions(t *testing.T) {
 	if err != nil {
 		fmt.Println("cannot initalize client", err)
 	}
-	result := client.Functions.Invoke("hello_world", functions.FunctionInvokeOptions{})
-	fmt.Println(result)
+	result, err := client.Functions.Invoke("hello_world", map[string]interface{}{"name": "world"})
+	fmt.Println(result, err)
 }

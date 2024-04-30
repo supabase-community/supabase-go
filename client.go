@@ -124,7 +124,7 @@ func (c *Client) UpdateAuthSession(session types.Session) {
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
-	c.Storage = storage_go.NewClient(c.options.url, session.AccessToken, c.options.headers)
-	c.Functions = functions.NewClient(c.options.url, session.AccessToken, c.options.headers)
+	c.Storage = storage_go.NewClient(c.options.url+STORGAGE_URL, session.AccessToken, c.options.headers)
+	c.Functions = functions.NewClient(c.options.url+FUNCTIONS_URL, session.AccessToken, c.options.headers)
 
 }

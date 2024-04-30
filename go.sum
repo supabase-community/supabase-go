@@ -10,6 +10,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/roja/functions-go v0.0.1 h1:vUb8BFUa8V9OEi+sxWnUSWGfpl5DvsUlrOtcvyebPWM=
 github.com/roja/functions-go v0.0.1/go.mod h1:nnIju6x3+OZSojtGQCQzu0h3kv4HdIZk+UWCnNxtSak=
+github.com/roja/functions-go v0.0.2 h1:fh+1XHtZ7HdJJAwHoJCyT6IHIHXIBpQ6fcS4dWDCKtI=
+github.com/roja/functions-go v0.0.2/go.mod h1:nnIju6x3+OZSojtGQCQzu0h3kv4HdIZk+UWCnNxtSak=
 github.com/roja/postgrest-go v0.0.10 h1:60ykdQdrsQKIsQkOLkSuI6xp1MqPy341ReVFTrUufCQ=
 github.com/roja/postgrest-go v0.0.10/go.mod h1:cw6LfzMyK42AOSBA1bQ/HZ381trIJyuui2GWhraW7Cc=
 github.com/roja/postgrest-go v0.0.11 h1:vGgsfL4+Tvkpbukneo4fPy/43gbeWSSlKmum9+pwDCI=
