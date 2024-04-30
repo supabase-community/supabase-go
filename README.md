@@ -9,9 +9,9 @@ An isomorphic Go client for Supabase.
 - [x] Integration with [Gotrue](https://github.com/supabase-community/gotrue-go)
   - User authentication, including OAuth, ***email/password***, and native sign-in
 - [x] Integration with [Supabase Storage](https://github.com/supabase-community/storage-go)
-  - Store files in S3 with additional managed metadata 
-- [ ] Integration with [Supabase Edge Functions](https://github.com/supabase-community/functions-go)
-  -  Run serverless functions on the edge
+  - Store files in S3 with additional managed metadata
+- [x] Integration with [Supabase Edge Functions](https://github.com/supabase-community/functions-go)
+  - Run serverless functions on the edge
 
 ## Quickstart
 
@@ -19,17 +19,20 @@ An isomorphic Go client for Supabase.
 2. Grab your Supabase URL and Supabase Public Key from the Admin Panel (Settings -> API Keys).
 3. Initialize the client!
 
-_Reminder: `supabase-go` has some APIs that require the `service_key` rather than the `public_key` (for instance: the administration of users, bypassing database roles, etc.). If you are using the `service_key` **be sure it is not exposed client side.** Additionally, if you need to use both a service account and a public/user account, please do so using a separate client instance for each._
+*Reminder: `supabase-go` has some APIs that require the `service_key` rather than the `public_key` (for instance: the administration of users, bypassing database roles, etc.). If you are using the `service_key` **be sure it is not exposed client side.** Additionally, if you need to use both a service account and a public/user account, please do so using a separate client instance for each.*
 
 ## Documentation
 
 ### Get Started
+
 First of all, you need to install the library:
+
 ```sh
   go get github.com/supabase-community/supabase-go
 ```
 
 Then you can use
+
 ```go
   client, err := supabase.NewClient(API_URL, API_KEY, "", nil)
   if err != nil {
@@ -38,15 +41,14 @@ Then you can use
   data, count, err := client.From("countries").Select("*", "exact", false).Execute()
 ```
 
-
 ### Use authenticated client
 
 ```go
 
-	client, err := supabase.NewClient(API_URL, API_KEY, "", nil)
-	if err != nil {
-		fmt.Println("cannot initalize client", err)
-	}
-	client.SignInWithEmailPassword(USER_EMAIL, USER_PASSWORD)
+ client, err := supabase.NewClient(API_URL, API_KEY, "", nil)
+ if err != nil {
+  fmt.Println("cannot initalize client", err)
+ }
+ client.SignInWithEmailPassword(USER_EMAIL, USER_PASSWORD)
 
 ```

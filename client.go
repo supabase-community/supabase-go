@@ -3,6 +3,7 @@ package supabase
 import (
 	"errors"
 
+	"github.com/supabase-community/functions-go"
 	"github.com/supabase-community/gotrue-go"
 	"github.com/supabase-community/gotrue-go/types"
 	postgrest "github.com/supabase-community/postgrest-go"
@@ -10,9 +11,10 @@ import (
 )
 
 const (
-	REST_URL     = "/rest/v1"
-	STORGAGE_URL = "/storage/v1"
-	AUTH_URL     = "/auth/v1"
+	REST_URL      = "/rest/v1"
+	STORGAGE_URL  = "/storage/v1"
+	AUTH_URL      = "/auth/v1"
+	FUNCTIONS_URL = "/functions/v1"
 )
 
 type Client struct {
@@ -20,8 +22,9 @@ type Client struct {
 	rest    *postgrest.Client
 	Storage *storage_go.Client
 	// Auth is an interface. We don't need a pointer to an interface.
-	Auth    gotrue.Client
-	options clientOptions
+	Auth      gotrue.Client
+	Functions *functions.Client
+	options   clientOptions
 }
 
 type clientOptions struct {
@@ -72,6 +75,7 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	// ugly to make auth client use custom URL
 	tmp := gotrue.New(url, key)
 	client.Auth = tmp.WithCustomGoTrueURL(url + AUTH_URL)
+	client.Functions = functions.NewClient(url+FUNCTIONS_URL, key, headers)
 
 	return client, nil
 }
@@ -121,5 +125,6 @@ func (c *Client) UpdateAuthSession(session types.Session) {
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
 	c.Storage = storage_go.NewClient(c.options.url, session.AccessToken, c.options.headers)
+	c.Functions = functions.NewClient(c.options.url, session.AccessToken, c.options.headers)
 
 }

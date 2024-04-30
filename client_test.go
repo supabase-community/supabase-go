@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/supabase-community/functions-go"
 	"github.com/supabase-community/supabase-go"
 )
 
@@ -37,4 +38,13 @@ func TestStorage(t *testing.T) {
 	}
 	result, err := client.Storage.GetBucket("bucket-id")
 	fmt.Println(result, err)
+}
+
+func TestFunctions(t *testing.T) {
+	client, err := supabase.NewClient(API_URL, API_KEY, nil)
+	if err != nil {
+		fmt.Println("cannot initalize client", err)
+	}
+	result := client.Functions.Invoke("hello_world", functions.FunctionInvokeOptions{})
+	fmt.Println(result)
 }
