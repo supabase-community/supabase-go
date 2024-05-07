@@ -2,6 +2,8 @@ package supabase
 
 import (
 	"errors"
+	"log"
+	"time"
 
 	"github.com/supabase-community/functions-go"
 	"github.com/supabase-community/gotrue-go"
@@ -109,6 +111,40 @@ func (c *Client) SignInWithPhonePassword(phone, password string) (types.Session,
 	}
 	c.UpdateAuthSession(token.Session)
 	return token.Session, err
+}
+
+func (c *Client) EnableTokenAutoRefresh(session types.Session) {
+	go func() {
+		attempt := 0
+		expiresAt := time.Now().Add(time.Duration(session.ExpiresIn) * time.Second)
+
+		for {
+			sleepDuration := (time.Until(expiresAt) / 4) * 3
+			if sleepDuration > 0 {
+				time.Sleep(sleepDuration)
+			}
+
+			// Refresh the token
+			newSession, err := c.RefreshToken(session.RefreshToken)
+			if err != nil {
+				attempt++
+				if attempt <= 3 {
+					log.Printf("Error refreshing token, retrying with exponential backoff: %v", err)
+					time.Sleep(time.Duration(1<<attempt) * time.Second)
+				} else {
+					log.Printf("Error refreshing token, retrying every 30 seconds: %v", err)
+					time.Sleep(30 * time.Second)
+				}
+				continue
+			}
+
+			// Update the session, reset the attempt counter, and update the expiresAt time
+			c.UpdateAuthSession(newSession)
+			session = newSession
+			attempt = 0
+			expiresAt = time.Now().Add(time.Duration(session.ExpiresIn) * time.Second)
+		}
+	}()
 }
 
 func (c *Client) RefreshToken(refreshToken string) (types.Session, error) {
