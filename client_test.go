@@ -38,3 +38,12 @@ func TestStorage(t *testing.T) {
 	result, err := client.Storage.GetBucket("bucket-id")
 	fmt.Println(result, err)
 }
+
+func TestFunctions(t *testing.T) {
+	client, err := supabase.NewClient(API_URL, API_KEY, nil)
+	if err != nil {
+		fmt.Println("cannot initalize client", err)
+	}
+	result, err := client.Functions.Invoke("hello_world", map[string]interface{}{"name": "world"})
+	fmt.Println(result, err)
+}
