@@ -16,9 +16,13 @@ github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcU
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/supabase-community/gotrue-go v1.2.0 h1:Zm7T5q3qbuwPgC6xyomOBKrSb7X5dvmjDZEmNST7MoE=
 github.com/supabase-community/gotrue-go v1.2.0/go.mod h1:86DXBiAUNcbCfgbeOPEh0PQxScLfowUbYgakETSFQOw=
+github.com/supabase-community/realtime-go v0.1.0 h1:dr+1N3dNCY0o4y0+QQvzsUYoaX2dwZpCfg+9j2aNaOc=
+github.com/supabase-community/realtime-go v0.1.0/go.mod h1:JM3SgAceD6Rmpuxe2mvJKEU2NytuiYRrK9A0mqFWC7U=
 github.com/supabase-community/storage-go v0.7.0 h1:cJ8HLbbnL54H5rHPtHfiwtpRwcbDfA3in9HL/ucHnqA=
 github.com/supabase-community/storage-go v0.7.0/go.mod h1:oBKcJf5rcUXy3Uj9eS5wR6mvpwbmvkjOtAA+4tGcdvQ=
 github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 h1:nrZ3ySNYwJbSpD6ce9duiP+QkD3JuLCcWkdaehUS/3Y=
 github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80/go.mod h1:iFyPdL66DjUD96XmzVL3ZntbzcflLnznH0fr99w5VqE=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+nhooyr.io/websocket v1.8.11 h1:f/qXNc2/3DpoSZkHt1DQu6rj4zGC8JmkkLkWss0MgN0=
+nhooyr.io/websocket v1.8.11/go.mod h1:rN9OFWIUwuxg4fR5tELlYC04bXYowCP9GX47ivo2l+c=

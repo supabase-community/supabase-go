@@ -9,6 +9,7 @@ import (
 	"github.com/supabase-community/gotrue-go"
 	"github.com/supabase-community/gotrue-go/types"
 	postgrest "github.com/supabase-community/postgrest-go"
+	realtime "github.com/supabase-community/realtime-go/realtime"
 	storage_go "github.com/supabase-community/storage-go"
 )
 
@@ -26,6 +27,7 @@ type Client struct {
 	// Auth is an interface. We don't need a pointer to an interface.
 	Auth      gotrue.Client
 	Functions *functions.Client
+	Realtime  *realtime.RealtimeClient
 	options   clientOptions
 }
 
@@ -37,6 +39,7 @@ type clientOptions struct {
 type ClientOptions struct {
 	Headers map[string]string
 	Schema  string
+	RefId   string
 }
 
 // NewClient creates a new Supabase client.
@@ -78,6 +81,12 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	tmp := gotrue.New(url, key)
 	client.Auth = tmp.WithCustomGoTrueURL(url + AUTH_URL)
 	client.Functions = functions.NewClient(url+FUNCTIONS_URL, key, headers)
+	// Realtime client requires the project reference ID instead of the full URL
+	if options != nil && options.RefId != "" {
+		client.Realtime = realtime.CreateRealtimeClient(options.RefId, key)
+	} else {
+		log.Println("Error initializing realtime client. The project reference ID is required.")
+	}
 
 	return client, nil
 }
