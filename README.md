@@ -2,7 +2,7 @@ An isomorphic Go client for Supabase.
 
 ## Features
 
-- [ ] Integration with [Supabase.Realtime](https://github.com/supabase-community/realtime-go)
+- [X] Integration with [Supabase.Realtime](https://github.com/supabase-community/realtime-go)
   - Realtime listeners for database changes
 - [x] Integration with [Postgrest](https://github.com/supabase-community/postgrest-go)
   - Access your database using a REST API generated from your schema & database functions
