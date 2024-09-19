@@ -14,7 +14,7 @@ import (
 
 const (
 	REST_URL      = "/rest/v1"
-	STORGAGE_URL  = "/storage/v1"
+	STORAGE_URL  = "/storage/v1"
 	AUTH_URL      = "/auth/v1"
 	FUNCTIONS_URL = "/functions/v1"
 )
@@ -73,7 +73,7 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	}
 
 	client.rest = postgrest.NewClient(url+REST_URL, schema, headers)
-	client.Storage = storage_go.NewClient(url+STORGAGE_URL, key, headers)
+	client.Storage = storage_go.NewClient(url+STORAGE_URL, key, headers)
 	// ugly to make auth client use custom URL
 	tmp := gotrue.New(url, key)
 	client.Auth = tmp.WithCustomGoTrueURL(url + AUTH_URL)
@@ -160,7 +160,7 @@ func (c *Client) UpdateAuthSession(session types.Session) {
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
-	c.Storage = storage_go.NewClient(c.options.url+STORGAGE_URL, session.AccessToken, c.options.headers)
+	c.Storage = storage_go.NewClient(c.options.url+STORAGE_URL, session.AccessToken, c.options.headers)
 	c.Functions = functions.NewClient(c.options.url+FUNCTIONS_URL, session.AccessToken, c.options.headers)
 
 }
