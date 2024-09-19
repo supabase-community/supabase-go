@@ -34,7 +34,7 @@ First of all, you need to install the library:
 Then you can use
 
 ```go
-  client, err := supabase.NewClient(API_URL, API_KEY, "", nil)
+  client, err := supabase.NewClient(API_URL, API_KEY, &supabase.ClientOptions{})
   if err != nil {
     fmt.Println("cannot initalize client", err)
   }
@@ -45,7 +45,7 @@ Then you can use
 
 ```go
 
- client, err := supabase.NewClient(API_URL, API_KEY, "", nil)
+ client, err := supabase.NewClient(API_URL, API_KEY, &supabase.ClientOptions{})
  if err != nil {
   fmt.Println("cannot initalize client", err)
  }
