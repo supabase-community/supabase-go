@@ -14,8 +14,8 @@ github.com/roja/postgrest-go v0.0.11 h1:vGgsfL4+Tvkpbukneo4fPy/43gbeWSSlKmum9+pw
 github.com/roja/postgrest-go v0.0.11/go.mod h1:cw6LfzMyK42AOSBA1bQ/HZ381trIJyuui2GWhraW7Cc=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
-github.com/supabase-community/gotrue-go v1.2.0 h1:Zm7T5q3qbuwPgC6xyomOBKrSb7X5dvmjDZEmNST7MoE=
-github.com/supabase-community/gotrue-go v1.2.0/go.mod h1:86DXBiAUNcbCfgbeOPEh0PQxScLfowUbYgakETSFQOw=
+github.com/supabase-community/auth-go v1.3.2 h1:ScKhTXGRS8766J8hEeWURRnrTRDAvKwQs1JPTXBEdcY=
+github.com/supabase-community/auth-go v1.3.2/go.mod h1:NR/6b0237xb8oUJt/eOmtnp7UyPpaVMrxOAKJsuRTtw=
 github.com/supabase-community/storage-go v0.7.0 h1:cJ8HLbbnL54H5rHPtHfiwtpRwcbDfA3in9HL/ucHnqA=
 github.com/supabase-community/storage-go v0.7.0/go.mod h1:oBKcJf5rcUXy3Uj9eS5wR6mvpwbmvkjOtAA+4tGcdvQ=
 github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 h1:nrZ3ySNYwJbSpD6ce9duiP+QkD3JuLCcWkdaehUS/3Y=

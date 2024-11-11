@@ -6,7 +6,7 @@ An isomorphic Go client for Supabase.
   - Realtime listeners for database changes
 - [x] Integration with [Postgrest](https://github.com/supabase-community/postgrest-go)
   - Access your database using a REST API generated from your schema & database functions
-- [x] Integration with [Gotrue](https://github.com/supabase-community/gotrue-go)
+- [x] Integration with [Auth](https://github.com/supabase-community/auth-go)
   - User authentication, including OAuth, ***email/password***, and native sign-in
 - [x] Integration with [Supabase Storage](https://github.com/supabase-community/storage-go)
   - Store files in S3 with additional managed metadata

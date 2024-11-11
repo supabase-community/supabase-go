@@ -6,8 +6,8 @@ toolchain go1.22.1
 
 require (
 	github.com/joho/godotenv v1.5.1
+	github.com/supabase-community/auth-go v1.3.2
 	github.com/supabase-community/functions-go v0.0.0-20220927045802-22373e6cb51d
-	github.com/supabase-community/gotrue-go v1.2.0
 	github.com/supabase-community/postgrest-go v0.0.11
 	github.com/supabase-community/storage-go v0.7.0
 )
