@@ -3,6 +3,8 @@ package supabase
 import (
 	"errors"
 	"log"
+	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/supabase-community/functions-go"
@@ -32,11 +34,13 @@ type Client struct {
 type clientOptions struct {
 	url     string
 	headers map[string]string
+	proxy   *url.URL
 }
 
 type ClientOptions struct {
 	Headers map[string]string
 	Schema  string
+	Proxy   string
 }
 
 // NewClient creates a new Supabase client.
@@ -72,12 +76,27 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 		schema = "public"
 	}
 
-	client.rest = postgrest.NewClient(url+REST_URL, schema, headers)
-	client.Storage = storage_go.NewClient(url+STORAGE_URL, key, headers)
+	if options != nil && options.Proxy != "" {
+		proxyURL, err := url.Parse(options.Proxy)
+		if err != nil {
+			return nil, err
+		}
+		client.options.proxy = proxyURL
+	}
+
+	httpClient := &http.Client{}
+	if client.options.proxy != nil {
+		httpClient.Transport = &http.Transport{
+			Proxy: http.ProxyURL(client.options.proxy),
+		}
+	}
+
+	client.rest = postgrest.NewClientWithHTTPClient(url+REST_URL, schema, headers, httpClient)
+	client.Storage = storage_go.NewClientWithHTTPClient(url+STORAGE_URL, key, headers, httpClient)
 	// ugly to make auth client use custom URL
-	tmp := gotrue.New(url, key)
+	tmp := gotrue.NewWithHTTPClient(url, key, httpClient)
 	client.Auth = tmp.WithCustomGoTrueURL(url + AUTH_URL)
-	client.Functions = functions.NewClient(url+FUNCTIONS_URL, key, headers)
+	client.Functions = functions.NewClientWithHTTPClient(url+FUNCTIONS_URL, key, headers, httpClient)
 
 	return client, nil
 }

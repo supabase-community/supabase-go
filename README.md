@@ -52,3 +52,17 @@ Then you can use
  client.SignInWithEmailPassword(USER_EMAIL, USER_PASSWORD)
 
 ```
+
+### Configure HTTP Proxy
+
+To configure an HTTP Proxy for the Supabase client, you can use the `Proxy` field in `ClientOptions`. Here's an example:
+
+```go
+  client, err := supabase.NewClient(API_URL, API_KEY, &supabase.ClientOptions{
+    Proxy: "http://your-proxy-url:port",
+  })
+  if err != nil {
+    fmt.Println("cannot initalize client", err)
+  }
+  data, count, err := client.From("countries").Select("*", "exact", false).Execute()
+```
