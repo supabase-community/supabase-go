@@ -71,6 +71,18 @@ client, err := supabase.NewClient(url, key, options)
 
 For more see [postgrest-go Query Builder documentation](https://pkg.go.dev/github.com/supabase-community/postgrest-go#QueryBuilder)
 
+### Accessing the PostgREST Client
+
+```go
+restClient := client.Rest()
+restClient.ChangeSchema("custom_schema")
+
+// Access PostgREST client errors
+if err := client.RestError(); err != nil {
+    log.Printf("PostgREST error: %v", err)
+}
+```
+
 ### Authentication
 
 The client provides comprehensive authentication features through the integrated GoTrue client.

@@ -80,6 +80,20 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	return client, nil
 }
 
+// Returns the underlying PostgREST client used by this Supabase Client
+func (c *Client) Rest() *postgrest.Client {
+	return c.rest
+}
+
+// Returns last recorded error by the underlying PostgREST client
+// Returns nil if the REST client is uninitialized or no error has occurred
+func (c *Client) RestError() error {
+	if c.rest == nil {
+		return nil
+	}
+	return c.rest.ClientError
+}
+
 // Wrap postgrest From method
 // From returns a QueryBuilder for the specified table.
 func (c *Client) From(table string) *postgrest.QueryBuilder {
