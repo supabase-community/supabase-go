@@ -3,12 +3,16 @@ package supabase
 import (
 	"errors"
 	"log"
+	"net"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/supabase-community/auth-go"
 	"github.com/supabase-community/auth-go/types"
 	"github.com/supabase-community/functions-go"
 	"github.com/supabase-community/postgrest-go"
+	"github.com/supabase-community/realtime-go/realtime"
 	storage_go "github.com/supabase-community/storage-go"
 )
 
@@ -26,17 +30,36 @@ type Client struct {
 	// Auth is an interface. We don't need a pointer to an interface.
 	Auth      auth.Client
 	Functions *functions.Client
+	Realtime  realtime.IRealtimeClient
 	options   clientOptions
 }
 
 type clientOptions struct {
-	url     string
-	headers map[string]string
+	url        string
+	headers    map[string]string
+	projectRef string
 }
 
 type ClientOptions struct {
-	Headers map[string]string
-	Schema  string
+	Headers    map[string]string
+	Schema     string
+	ProjectRef string
+}
+
+func extractProjectRef(rawURL string) string {
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return ""
+	}
+	host := parsedURL.Hostname()
+	if host == "localhost" || net.ParseIP(host) != nil {
+		return ""
+	}
+	parts := strings.Split(host, ".")
+	if len(parts) >= 2 {
+		return parts[0]
+	}
+	return ""
 }
 
 // NewClient creates a new Supabase client.
@@ -44,7 +67,6 @@ type ClientOptions struct {
 // key is the Supabase API key.
 // options is the Supabase client options.
 func NewClient(url, key string, options *ClientOptions) (*Client, error) {
-
 	if url == "" || key == "" {
 		return nil, errors.New("url and key are required")
 	}
@@ -65,6 +87,14 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	// map is pass by reference, so this gets updated by rest of function
 	client.options.headers = headers
 
+	var projectRef string
+	if options != nil && options.ProjectRef != "" {
+		projectRef = options.ProjectRef
+	} else {
+		projectRef = extractProjectRef(url)
+	}
+	client.options.projectRef = projectRef
+
 	var schema string
 	if options != nil && options.Schema != "" {
 		schema = options.Schema
@@ -76,6 +106,10 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	client.Storage = storage_go.NewClient(url+STORAGE_URL, key, headers)
 	client.Auth = auth.New(url, key).WithCustomAuthURL(url + AUTH_URL)
 	client.Functions = functions.NewClient(url+FUNCTIONS_URL, key, headers)
+
+	if projectRef != "" {
+		client.Realtime = realtime.NewRealtimeClient(projectRef, key)
+	}
 
 	return client, nil
 }
@@ -158,7 +192,11 @@ func (c *Client) UpdateAuthSession(session types.Session) {
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
+
+	if c.Realtime != nil {
+		_ = c.Realtime.SetAuth(session.AccessToken)
+	}
+
 	c.Storage = storage_go.NewClient(c.options.url+STORAGE_URL, session.AccessToken, c.options.headers)
 	c.Functions = functions.NewClient(c.options.url+FUNCTIONS_URL, session.AccessToken, c.options.headers)
-
 }

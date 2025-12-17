@@ -63,3 +63,36 @@ func TestFunctions(t *testing.T) {
 	}
 	t.Logf("function invokation result: %v", result)
 }
+
+func TestNewClientWithProjectRef(t *testing.T) {
+	options := &supabase.ClientOptions{
+		ProjectRef: "testproject",
+	}
+	client, err := supabase.NewClient("https://custom.domain.com", API_KEY, options)
+	if err != nil {
+		t.Fatalf("cannot initialize client: %v", err)
+	}
+	if client.Realtime == nil {
+		t.Error("Realtime client should be initialized when ProjectRef is provided")
+	}
+}
+
+func TestNewClientRealtimeNil(t *testing.T) {
+	client, err := supabase.NewClient("http://localhost:54321", API_KEY, nil)
+	if err != nil {
+		t.Fatalf("cannot initialize client: %v", err)
+	}
+	if client.Realtime != nil {
+		t.Error("Realtime client should be nil for localhost URLs without ProjectRef")
+	}
+}
+
+func TestNewClientRealtimeInitialized(t *testing.T) {
+	client, err := supabase.NewClient(API_URL, API_KEY, nil)
+	if err != nil {
+		t.Fatalf("cannot initialize client: %v", err)
+	}
+	if client.Realtime == nil {
+		t.Error("Realtime client should be initialized for standard Supabase URLs")
+	}
+}
