@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+
+  - repo: https://github.com/tekwizely/pre-commit-golang
+    rev: v1.0.0-rc.2
+    hooks:
+      # Go Vet
+      - id: go-vet-mod
+
+      # Formatters
+      - id: go-imports
+
+      - id: my-cmd-mod
+        name: go-fumpt
+        alias: go-fumpt
+        args: [ go, tool, gofumpt, "-w", "." ]
+
+      # Go Mod Tidy
+      - id: go-mod-tidy-repo
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks

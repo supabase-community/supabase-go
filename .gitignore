@@ -1,0 +1,15 @@
+# Test binary, generated with `go test -c`
+*.test
+
+# Output of the go build command
+/bin/
+/pkg/
+
+
+# IDE specific files
+.idea/
+.vscode/
+
+# Local environment variables
+.env
+.env.*
