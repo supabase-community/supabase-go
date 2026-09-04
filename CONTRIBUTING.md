@@ -1,5 +1,11 @@
 # Contributing to Supabase Go Client
 
+> [!IMPORTANT]
+> **Update, September 2026:**  
+> This codebase is not being actively maintained by Supabase or the community, but it's not the end of the road...
+> We're busy building an official Supabase SDK for Go that will make this repository and the module it publishes obsolete.
+> [This thread](https://github.com/orgs/supabase/discussions/49311) has more information, as well as providing a venue for discussion in the meantime.
+
 Thank you for your interest in contributing to the Supabase Go Client! This document provides guidelines and instructions for contributing to this project.
 
 ## Getting Started
