@@ -8,8 +8,8 @@ An isomorphic Go client for Supabase.
 
 ## Features
 
-- [ ] Integration with [Supabase.Realtime](https://github.com/supabase-community/realtime-go)
-  - Realtime listeners for database changes
+- [x] Integration with [Supabase.Realtime](https://github.com/supabase-community/realtime-go)
+  - Realtime listeners for database changes (Broadcast, Presence, Postgres CDC)
 - [x] Integration with [Postgrest](https://github.com/supabase-community/postgrest-go)
   - Access your database using a REST API generated from your schema & database functions
 - [x] Integration with [Gotrue](https://github.com/supabase-community/gotrue-go)
@@ -127,4 +127,67 @@ client.EnableTokenAutoRefresh(session)
 // - Refresh tokens before they expire (at 75% of expiry time)
 // - Retry failed refreshes with exponential backoff
 // - Update all service clients with new tokens
+```
+
+### Realtime
+
+The client includes support for Supabase Realtime features including Broadcast, Presence, and Postgres Change Data Capture (CDC).
+
+**Important:** The Realtime client uses lazy connection. You must explicitly call `Connect()` before subscribing to channels.
+
+#### Basic Usage
+
+```go
+ctx := context.Background()
+
+// Connect to the Realtime server
+err = client.Realtime.Connect(ctx)
+if err != nil {
+    log.Fatal("Failed to connect:", err)
+}
+defer client.Realtime.Disconnect()
+
+// Create and subscribe to a channel
+channel := client.Realtime.Channel("room:123", nil)
+err = channel.Subscribe(ctx, func(state realtime.SubscribeState, err error) {
+    if err != nil {
+        log.Printf("Subscription error: %v", err)
+        return
+    }
+    log.Printf("Subscription state: %v", state)
+})
+```
+
+#### Listening for Postgres Changes
+
+```go
+channel.OnPostgresChange("INSERT", func(event realtime.PostgresChangeEvent) {
+    log.Printf("New row inserted in %s: %s", event.Table, event.Payload)
+})
+```
+
+#### Broadcast Messages
+
+```go
+// Listen for broadcast events
+channel.OnBroadcast("cursor-move", func(payload json.RawMessage) {
+    log.Printf("Cursor moved: %s", payload)
+})
+
+// Send a broadcast message
+channel.SendBroadcast("cursor-move", map[string]interface{}{
+    "x": 100,
+    "y": 200,
+})
+```
+
+#### Non-Standard URLs
+
+For self-hosted instances or custom URL formats where the project reference cannot be automatically extracted, provide it explicitly:
+
+```go
+options := &supabase.ClientOptions{
+    ProjectRef: "your-project-ref",
+}
+client, err := supabase.NewClient("https://supabase.yourcompany.com", key, options)
 ```
