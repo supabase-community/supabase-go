@@ -3,6 +3,7 @@ package supabase
 import (
 	"errors"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/supabase-community/auth-go"
@@ -32,6 +33,7 @@ type Client struct {
 type clientOptions struct {
 	url     string
 	headers map[string]string
+	mutex   *sync.Mutex
 }
 
 type ClientOptions struct {
@@ -62,6 +64,7 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 
 	client := &Client{}
 	client.options.url = url
+	client.options.mutex = &sync.Mutex{}
 	// map is pass by reference, so this gets updated by rest of function
 	client.options.headers = headers
 
@@ -155,6 +158,9 @@ func (c *Client) RefreshToken(refreshToken string) (types.Session, error) {
 }
 
 func (c *Client) UpdateAuthSession(session types.Session) {
+	c.options.mutex.Lock()
+	defer c.options.mutex.Unlock()
+
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
