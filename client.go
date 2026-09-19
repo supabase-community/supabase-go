@@ -92,6 +92,20 @@ func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
 	return c.rest.Rpc(name, count, rpcBody)
 }
 
+// Wrap postgrest Rpc method
+// Rpc returns a string for the specified function.
+func (c *Client) RpcWithError(name, count string, rpcBody interface{}) (string, error) {
+	return c.rest.RpcWithError(name, count, rpcBody)
+}
+
+// ClientError returns the last error that occurred during a request.
+// Generally, this should be checked only if the result of another method is
+// nil or empty. The error is not cleared after each call, so checking that it
+// is nil does not guarantee that the last request was successful.
+func (c *Client) ClientError() error {
+	return c.rest.ClientError
+}
+
 func (c *Client) SignInWithEmailPassword(email, password string) (types.Session, error) {
 	resp, err := c.Auth.SignInWithEmailPassword(email, password)
 	if err != nil {

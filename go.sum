@@ -10,8 +10,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/roja/functions-go v0.0.2 h1:fh+1XHtZ7HdJJAwHoJCyT6IHIHXIBpQ6fcS4dWDCKtI=
 github.com/roja/functions-go v0.0.2/go.mod h1:nnIju6x3+OZSojtGQCQzu0h3kv4HdIZk+UWCnNxtSak=
-github.com/roja/postgrest-go v0.0.11 h1:vGgsfL4+Tvkpbukneo4fPy/43gbeWSSlKmum9+pwDCI=
-github.com/roja/postgrest-go v0.0.11/go.mod h1:cw6LfzMyK42AOSBA1bQ/HZ381trIJyuui2GWhraW7Cc=
+github.com/stevenctl/postgrest-go v0.0.0-20251107080813-0095e2979782 h1:2jiUJaaQwwZm5W8nYIFBifxYfLkueNXhKSPXr8wLcLM=
+github.com/stevenctl/postgrest-go v0.0.0-20251107080813-0095e2979782/go.mod h1:cw6LfzMyK42AOSBA1bQ/HZ381trIJyuui2GWhraW7Cc=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/supabase-community/auth-go v1.4.0 h1:5dS0NB9TKdT3zwaQqHJhrTFXvAcIC2/EDVC9dEV0wnY=

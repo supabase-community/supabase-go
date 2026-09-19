@@ -17,6 +17,6 @@ require (
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 )
 
-replace github.com/supabase-community/postgrest-go => github.com/roja/postgrest-go v0.0.11
+replace github.com/supabase-community/postgrest-go => github.com/stevenctl/postgrest-go v0.0.0-20251107080813-0095e2979782
 
 replace github.com/supabase-community/functions-go => github.com/roja/functions-go v0.0.2
