@@ -3,6 +3,7 @@ package supabase
 import (
 	"errors"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/supabase-community/auth-go"
@@ -20,6 +21,7 @@ const (
 )
 
 type Client struct {
+	mu sync.RWMutex
 	// Why is this a private field??
 	rest    *postgrest.Client
 	Storage *storage_go.Client
@@ -80,20 +82,31 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 	return client, nil
 }
 
+// Helper for safely reading the auth client
+func (c *Client) getAuth() auth.Client {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.Auth
+}
+
 // Wrap postgrest From method
 // From returns a QueryBuilder for the specified table.
 func (c *Client) From(table string) *postgrest.QueryBuilder {
+	c.mu.RLock()
+    defer c.mu.RUnlock()
 	return c.rest.From(table)
 }
 
 // Wrap postgrest Rpc method
 // Rpc returns a string for the specified function.
 func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 	return c.rest.Rpc(name, count, rpcBody)
 }
 
 func (c *Client) SignInWithEmailPassword(email, password string) (types.Session, error) {
-	resp, err := c.Auth.SignInWithEmailPassword(email, password)
+	resp, err := c.getAuth().SignInWithEmailPassword(email, password)
 	if err != nil {
 		return types.Session{}, err
 	}
@@ -103,7 +116,7 @@ func (c *Client) SignInWithEmailPassword(email, password string) (types.Session,
 }
 
 func (c *Client) SignInWithPhonePassword(phone, password string) (types.Session, error) {
-	resp, err := c.Auth.SignInWithPhonePassword(phone, password)
+	resp, err := c.getAuth().SignInWithPhonePassword(phone, password)
 	if err != nil {
 		return types.Session{}, err
 	}
@@ -146,7 +159,7 @@ func (c *Client) EnableTokenAutoRefresh(session types.Session) {
 }
 
 func (c *Client) RefreshToken(refreshToken string) (types.Session, error) {
-	resp, err := c.Auth.RefreshToken(refreshToken)
+	resp, err := c.getAuth().RefreshToken(refreshToken)
 	if err != nil {
 		return types.Session{}, err
 	}
@@ -155,10 +168,12 @@ func (c *Client) RefreshToken(refreshToken string) (types.Session, error) {
 }
 
 func (c *Client) UpdateAuthSession(session types.Session) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	c.Auth = c.Auth.WithToken(session.AccessToken)
 	c.rest.SetAuthToken(session.AccessToken)
 	c.options.headers["Authorization"] = "Bearer " + session.AccessToken
 	c.Storage = storage_go.NewClient(c.options.url+STORAGE_URL, session.AccessToken, c.options.headers)
 	c.Functions = functions.NewClient(c.options.url+FUNCTIONS_URL, session.AccessToken, c.options.headers)
-
 }
