@@ -128,3 +128,132 @@ client.EnableTokenAutoRefresh(session)
 // - Retry failed refreshes with exponential backoff
 // - Update all service clients with new tokens
 ```
+
+## Additional CRUD Examples
+
+### � Keywords to Remember
+
+| SQL | REST | Go |
+| :--- | :--- | :--- |
+| **INSERT** | POST | `Insert()` |
+| **SELECT** | GET | `Select()` |
+| **UPDATE** | PATCH | `Update()` |
+| **DELETE** | DELETE | `Delete()` |
+| **WHERE** | Query params | `.Eq()`, `.Gt()` |
+| **EXECUTE** | HTTP send | `.Execute()` |
+
+### �🔧 1. Setup & Initialization
+
+First, install and initialize the Supabase client:
+
+```bash
+go get github.com/supabase-community/supabase-go
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	supabase "github.com/supabase-community/supabase-go"
+)
+
+func main() {
+	url := "https://<your-project-ref>.supabase.co"
+	key := "<YOUR_SUPABASE_KEY>"
+
+	client, err := supabase.NewClient(url, key, &supabase.ClientOptions{})
+	if err != nil {
+		log.Fatalf("Failed to initialize Supabase client: %v", err)
+	}
+
+	fmt.Println("Supabase client ready:", client)
+}
+```
+
+*Replace `<your-project-ref>` and `<YOUR_SUPABASE_KEY>` with your Supabase project URL & API key from the dashboard.*
+
+### 📌 2. Create (INSERT)
+
+To insert a new row:
+
+```go
+type Country struct {
+    ID      int    `json:"id"`
+    Name    string `json:"name"`
+    Capital string `json:"capital"`
+}
+
+func createCountry(client *supabase.Client) {
+    country := Country{Name: "India", Capital: "New Delhi"}
+
+    resp, _, err := client.From("countries").
+        Insert(&country, nil).
+        Execute()
+    if err != nil {
+        log.Fatalf("Insert failed: %v", err)
+    }
+
+    fmt.Println("Insert response:", string(resp))
+}
+```
+
+### 📖 3. Read (SELECT)
+
+Fetch rows from a table:
+
+```go
+func getCountries(client *supabase.Client) {
+    resp, _, err := client.From("countries").
+        Select("*", nil).
+        Execute()
+    if err != nil {
+        log.Fatalf("Select failed: %v", err)
+    }
+
+    fmt.Println("Countries:", string(resp))
+}
+```
+
+### 🔄 4. Update (UPDATE)
+
+To update existing rows:
+
+```go
+func updateCountry(client *supabase.Client, id int) {
+    updates := map[string]interface{}{
+        "capital": "New Updated Capital",
+    }
+
+    resp, _, err := client.From("countries").
+        Update(updates, nil).
+        Eq("id", id).
+        Execute()
+    if err != nil {
+        log.Fatalf("Update failed: %v", err)
+    }
+
+    fmt.Println("Update response:", string(resp))
+}
+```
+
+### ❌ 5. Delete (DELETE)
+
+Deleting rows is similar — just call `.Delete()`:
+
+```go
+func deleteCountry(client *supabase.Client, id int) {
+    resp, _, err := client.From("countries").
+        Delete(nil).
+        Eq("id", id).
+        Execute()
+    if err != nil {
+        log.Fatalf("Delete failed: %v", err)
+    }
+
+    fmt.Println("Delete response:", string(resp))
+}
+```
+
