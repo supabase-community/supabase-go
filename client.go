@@ -60,6 +60,8 @@ func NewClient(url, key string, options *ClientOptions) (*Client, error) {
 		}
 	}
 
+	applyXClientInfoHeader(headers)
+
 	client := &Client{}
 	client.options.url = url
 	// map is pass by reference, so this gets updated by rest of function
