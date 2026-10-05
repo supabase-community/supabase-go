@@ -1,6 +1,8 @@
 package supabase_test
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/supabase-community/supabase-go"
@@ -62,4 +64,31 @@ func TestFunctions(t *testing.T) {
 		t.Errorf("cannot invoke function: %v", err)
 	}
 	t.Logf("function invokation result: %v", result)
+}
+
+func TestGetUserSendsAuthHeader(t *testing.T) {
+	var receivedAuth string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		receivedAuth = r.Header.Get("Authorization")
+		if r.URL.Path == "/auth/v1/user" {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"id":"550e8400-e29b-41d4-a716-446655440000","email":"test@example.com"}`))
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	client, err := supabase.NewClient(server.URL, "test-api-key", nil)
+	if err != nil {
+		t.Fatalf("cannot initialize client: %v", err)
+	}
+
+	_, err = client.Auth.GetUser()
+	if err != nil {
+		t.Fatalf("GetUser failed: %v", err)
+	}
+	if receivedAuth != "Bearer test-api-key" {
+		t.Errorf("expected Authorization header 'Bearer test-api-key', got %q", receivedAuth)
+	}
 }
