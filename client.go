@@ -88,6 +88,13 @@ func (c *Client) From(table string) *postgrest.QueryBuilder {
 	return c.rest.From(table)
 }
 
+// Wrap postgrest ChangeSchema method
+// ChangeSchema changes the schema of the client.
+func (c *Client) ChangeSchema(schema string) *Client {
+	c.rest = c.rest.ChangeSchema(schema)
+	return c
+}
+
 // Wrap postgrest Rpc method
 // Rpc returns a string for the specified function.
 func (c *Client) Rpc(name, count string, rpcBody interface{}) string {
