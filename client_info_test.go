@@ -12,11 +12,11 @@ func TestBuildXClientInfo(t *testing.T) {
 		t.Fatalf("expected library token supabase-go/%s, got %q", Version, info)
 	}
 
-	required := []string{"platform=", "runtime=go", "runtime-version="}
-	for _, fragment := range required {
-		if !strings.Contains(info, fragment) {
-			t.Errorf("expected %q in X-Client-Info, got %q", fragment, info)
-		}
+	// Structured metadata after the library token, such as "; platform=linux; runtime=go", is reserved for the official Supabase Go SDK (github.com/supabase/supabase-go).
+	// That SDK shares this library's name, and Supabase tells the two apart in its usage data by whether the value carries metadata.
+	// Metadata here would count this library's traffic as the official SDK's.
+	if strings.Contains(info, ";") {
+		t.Fatalf("X-Client-Info %q carries metadata, which is reserved for the official Supabase Go SDK", info)
 	}
 }
 
