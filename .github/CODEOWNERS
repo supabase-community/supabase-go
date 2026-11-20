@@ -1,0 +1,6 @@
+# client_info.go builds the X-Client-Info header, and client_info_test.go fails if structured metadata appears in it, for the reason given there.
+/client_info.go @QuintinWillison
+/client_info_test.go @QuintinWillison
+
+# Owning this file too means changing the entries above asks for the same review.
+/.github/CODEOWNERS @QuintinWillison
