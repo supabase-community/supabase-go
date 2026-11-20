@@ -2,7 +2,6 @@ package supabase
 
 import (
 	"fmt"
-	"runtime"
 	"strings"
 )
 
@@ -12,20 +11,9 @@ const (
 	Version = "0.0.5"
 )
 
+// buildXClientInfo returns the X-Client-Info value this library sends: the library token alone, with no structured metadata after it.
 func buildXClientInfo() string {
-	parts := []string{fmt.Sprintf("supabase-go/%s", Version)}
-
-	if platform := runtime.GOOS; platform != "" {
-		parts = append(parts, "platform="+platform)
-	}
-
-	parts = append(parts, "runtime=go")
-
-	if v := strings.TrimPrefix(runtime.Version(), "go"); v != "" {
-		parts = append(parts, "runtime-version="+v)
-	}
-
-	return strings.Join(parts, "; ")
+	return fmt.Sprintf("supabase-go/%s", Version)
 }
 
 func applyXClientInfoHeader(headers map[string]string) {
